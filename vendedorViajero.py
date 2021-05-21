@@ -223,7 +223,7 @@ def buscarRecorrido(n):
     Retorna
     -------
     1. string
-        - Texto que representa las ciudades reocorridas en orden y la distancia entre ellas
+        - Texto que representa las ciudades recorridas en orden y la distancia entre ellas
     2. float
         - Microsegundos que demoro la ejecucion del algoritmo
     """
