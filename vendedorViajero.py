@@ -1,27 +1,30 @@
+from constants import (MIN_DISTANCIA, MAX_DISTANCIA, VALOR_GRANDE, SEC_A_MICRO, TAM_MUESTRA, MIN_CIUDAD, FALLO_CIUDAD, PASO_CIUDAD)
 import numpy as np#Para manejar arreglos y matrices
 import random#generar numero al azar
+import timeit#Para revisar la velocidad del algoritmo
+import sys#Leer linea de comando
 
 class NodoCiudad:
     """
-    Clase que representa un nodo que contiene la ciudad actual de un recorrido.
+    Clase que representa un nodo que contiene la ciudad actual de un recorrido
     
     Atributos
     ---------
-    __padre : NodoCiudad 
-        Nodo que representa la ciudad anterior del recorrido
-    __hijos : NodoCiudad[]
-        Lista de nodos que representan ciudades aun no visitadas
-    __id : int
-        Numero que identifica a la ciudad en la matriz de distancias
+    1. __padre : NodoCiudad 
+        - Nodo que representa la ciudad anterior del recorrido
+    2. __hijos : NodoCiudad[]
+        - Lista de nodos que representan ciudades aun no visitadas
+    3. __id : int
+        - Numero que identifica a la ciudad en la matriz de distancias
 
     Metodos
     -------
-    getHijos()
-        Retorna los hijos
-    getId()
-        Retorna el id
-    getPadre()
-        Retorna el padre
+    1. getHijos() : NodoCiudad[]
+        - Retorna los hijos
+    2. getId() : int
+        - Retorna el id
+    3. getPadre() : NodoCiudad 
+        - Retorna el padre
     """
 
     __padre = None
@@ -34,12 +37,12 @@ class NodoCiudad:
 
         Parametros
         ----------
-        id : int
-            El identificador del Nodo
-        Padre : NodoCiudad
-            El nodo padre
-        hijos : int[]
-            Lista de los identificadores de las ciudades por recorrer
+        1. id : int
+            - El identificador del Nodo
+        2. Padre : NodoCiudad
+            - El nodo padre
+        3. hijos : int[]
+            - Lista de los identificadores de las ciudades por recorrer
         """
 
         self.__id = id
@@ -55,8 +58,8 @@ class NodoCiudad:
         
         Retorna
         -------
-        NodoCiudad[]
-            Los hijos del nodo
+        1. NodoCiudad[]
+            - Los hijos del nodo
         """
 
         return self.__hijos
@@ -66,8 +69,8 @@ class NodoCiudad:
         
         Retorna
         -------
-        int
-            El id de la ciudad
+        1. int
+            - El id de la ciudad
         """
 
         return self.__id
@@ -77,8 +80,8 @@ class NodoCiudad:
 
         Retorna
         -------
-        NodoCiudad
-            El padre
+        1. NodoCiudad
+            - El padre
         """
 
         return self.__padre
@@ -86,32 +89,31 @@ class NodoCiudad:
 class ArbolNario:
     """
     Clase que representa un arbol donde cada nodo tiene N hijos. Cada hoja del arbol es un posible recorrido por 
-    todas las ciudades.
-    
+    todas las ciudades
     
     Atributos
     ---------
-    __raiz : NodoCiudad 
-        Nodo que representa la raiz del arbol y la primera ciudad recorrida
+    1. __raiz : NodoCiudad 
+        - Nodo que representa la raiz del arbol y la primera ciudad recorrida
 
     Metodos
     -------
-    getRaiz()
-        Retorna la raiz
+    1. getRaiz() : NodoCiudad 
+        - Retorna la raiz
     """
 
     __raiz = None
 
     def __init__(self, id, n):
         """
-        Crea la lista de identificadores de las ciudades y el nodo raiz, el cual recursivamente crea el resto del arbol.
+        Crea la lista de identificadores de las ciudades y el nodo raiz, el cual recursivamente crea el resto del arbol
 
         Parametros
         ----------
-        id : int
-            El identificador de la primera ciudad.
-        n : int
-            La cantidad de ciudades
+        1. id : int
+            - El identificador de la primera ciudad
+        2. n : int
+            - La cantidad de ciudades
         """
 
         hijos = np.delete(np.arange(n),id,0)#Se remueve el nodo de la lista una vez recorrido
@@ -122,51 +124,51 @@ class ArbolNario:
 
         Retorna
         -------
-        NodoCiudad
-            La raiz
+        1. NodoCiudad
+            - La raiz
         """
 
         return self.__raiz
 
 def generarMatriz(n):
-    """Crea y retorna una matriz con las distancias entre las ciudades.
+    """Crea y retorna una matriz con las distancias entre las ciudades
 
     Parametros
     ----------
-    n : int
-        La cantidad de ciudades
+    1. n : int
+        - La cantidad de ciudades
 
     Retorna
     -------
-    int[][]
-        La matriz con las distancias entre las ciudades.
+    1. int[][]
+        - La matriz con las distancias entre las ciudades
     """
 
-    dist = np.random.randint(0,50,size=(n,n))#Hasta 50 ya que se va a sumar con la transpuesta duplicando los valores
+    dist = np.random.randint(MIN_DISTANCIA,MAX_DISTANCIA/2,size=(n,n))#Hasta 50 ya que se va a sumar con la transpuesta duplicando los valores
     dist = dist + dist.T#Para hacer la matriz simetrica
     np.fill_diagonal(dist, 0)#La distancia entre una ciudad y si misma es 0
     return dist
 
 def encontrarMejor(padre, hijos, dist):
-    """Encuentra la ciudad mas cercana no recorrida a la ciudad actual.
+    """Encuentra la ciudad mas cercana no recorrida a la ciudad actual
 
     Parametros
     ----------
-    padre : NodoCiudad
-        Nodo que representa la ciudad actual
-    hijos : NodoCiudad[]
-        Lista de nodos que representan ciudades aun no visitadas
-    dist : 
-        La matriz con la disntancia entre las ciudades
+    1. padre : NodoCiudad
+        - Nodo que representa la ciudad actual
+    2. hijos : NodoCiudad[]
+        - Lista de nodos que representan ciudades aun no visitadas
+    3. dist : 
+        - La matriz con la distancia entre las ciudades
 
     Retorna
     -------
-    NodoCiudad
-        El nodo que representa la ciudad mas cercana.
+    1. NodoCiudad
+        - El nodo que representa la ciudad mas cercana
     """
 
     #el valor minimo original tiene que ser un valor muy alto
-    minimo = 999
+    minimo = VALOR_GRANDE
     #aqui almacenaremos la posicion del mejor hijo en el arreglo hijos[]
     mejor = 0
     #se van a recorrer todos los hijos que posee el padre
@@ -178,20 +180,20 @@ def encontrarMejor(padre, hijos, dist):
     #ahora tenemos que retornar el nodo con el mejor hijo
     return hijos[mejor]
 
-def calcularRecorrido(nodo, dist):
+def obtenerRecorrido(nodo, dist):
     """Ordena las ciudades recorridas y la distancia entre ellas.
 
     Parametros
     ----------
-    nodo : NodoCiudad
-        Nodo que representa la ultima ciudad recorrida
-    dist : 
-        La matriz con la disntancia entre las ciudades
+    1. nodo : NodoCiudad
+        - Nodo que representa la ultima ciudad recorrida
+    2. dist : 
+        - La matriz con la distancia entre las ciudades
 
     Retorna
     -------
-    string
-        Texto que representa las ciudades recorridas en orden y la distancia entre ellas.
+    1. string
+        - Texto que representa las ciudades recorridas en orden y la distancia entre ellas
     """
 
     recorrido = []
@@ -205,40 +207,59 @@ def calcularRecorrido(nodo, dist):
     #Se recorre el arreglo a la inversa para empezar con la primera ciudad
     for i in range(len(recorrido)-1, 0, -1):
         #Por cada ciudad se calcula la distancia con la siguiente
-        camino += "[" + str(recorrido[i]) + "] -> " + str(dist[recorrido[i]][recorrido[i-1]]) + " -> "
+        camino += "[C" + str(recorrido[i]) + "] -> " + str(dist[recorrido[i]][recorrido[i-1]]) + " -> "
     #La ultima ciudad no tiene siguiente
-    camino += "[" + str(recorrido[0]) + "]"
+    camino += "[C" + str(recorrido[0]) + "]"
     return camino      
 
 def buscarRecorrido(n):
-    """Encuentra una solucion al problema del vendedor viajero mediante el algoritmo Hill Climbing.
+    """Encuentra una solucion al problema del vendedor viajero mediante el algoritmo Hill Climbing
 
     Parametros
     ----------
-    n : int
-        Cantidad de ciudades
+    1. n : int
+        - Cantidad de ciudades
 
     Retorna
     -------
-    string
-        Texto que representa las ciudades reocrridas en orden y la distancia entre ellas.
+    1. string
+        - Texto que representa las ciudades reocorridas en orden y la distancia entre ellas
+    2. float
+        - Microsegundos que demoro la ejecucion del algoritmo
     """
     #se llama la función para generar una matriz de tamaño N x N
     dist = generarMatriz(n)
-    #se imprime la matriz por pantalla
-    print(dist)
-    #empezamos con la ciudad 0, abajo hay una linea de codigo que se podría utilizar para en vez escoger una ciudad aleatoria
-    #primCiudad = random.randrange(0, n)
+    #empezamos con la ciudad 0
     primCiudad = 0
-    #se imprime la ciudad por la que se comienza
-    print(primCiudad)
-    
+
     arbol = ArbolNario(primCiudad,n)
     nodo = arbol.getRaiz()
 
+    startTime = timeit.default_timer()#Comienzo del algoritmo Hill-Climbing
     while(nodo.getHijos().size > 0):
         hijos = nodo.getHijos()
-        nodo = encontrarMejor(nodo.getId(), hijos, dist)
-    return calcularRecorrido(nodo, dist)
+        nodo = encontrarMejor(nodo.getId(), hijos, dist) 
+    exeTime = round((timeit.default_timer() - startTime)*SEC_A_MICRO,1)
+    return obtenerRecorrido(nodo, dist), exeTime
 
-print(buscarRecorrido(4))
+if(len(sys.argv) > 1 and sys.argv[1].isnumeric()):#Revisar un numero de ciudades determinado
+    ciudades = int(sys.argv[1])
+
+    print("Solucion encontrada, comenzando en ciudad [C0].")
+    print("Numero de ciudades:", ciudades)
+    recorrido, tiempo = buscarRecorrido(ciudades)
+    print(recorrido)
+    print("Tiempo total:",tiempo,"[µs]")
+
+else:#Tiempo promedio para varios numeros de ciudades
+    ciudadesTiempo = []
+    contador = 0
+    muestra = TAM_MUESTRA
+    for i in range(MIN_CIUDAD, FALLO_CIUDAD, PASO_CIUDAD):
+        ciudadesTiempo.append([i,0])#Se agrega la ciudad
+        for j in range(0,muestra):
+            recorrido, tiempo = buscarRecorrido(i)
+            ciudadesTiempo[contador][1] += tiempo#Se suma el tiempo a la ciudad correpondiente
+        ciudadesTiempo[contador][1] /= muestra#Se divide para obtener el promedio
+        contador += 1
+    print(ciudadesTiempo)
