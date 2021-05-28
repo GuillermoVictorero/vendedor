@@ -1,4 +1,4 @@
-from constants import (MIN_DISTANCIA, MAX_DISTANCIA, VALOR_GRANDE, SEC_A_MICRO, TAM_MUESTRA, MIN_CIUDAD, FALLO_CIUDAD, PASO_CIUDAD)
+from constants import (MIN_DISTANCIA, MAX_DISTANCIA, SEC_A_MICRO, TAM_MUESTRA, MIN_CIUDAD, FALLO_CIUDAD, PASO_CIUDAD)
 import numpy as np#Para manejar arreglos y matrices
 import random#generar numero al azar
 import timeit#Para revisar la velocidad del algoritmo
@@ -167,14 +167,14 @@ def encontrarMejor(padre, hijos, dist):
         - El nodo que representa la ciudad mas cercana
     """
 
-    #el valor minimo original tiene que ser un valor muy alto
-    minimo = VALOR_GRANDE
+    #el valor minimo de la distancia
+    minimo = dist[hijos[0].getId()][padre]
     #aqui almacenaremos la posicion del mejor hijo en el arreglo hijos[]
     mejor = 0
     #se van a recorrer todos los hijos que posee el padre
-    for i in range(len(hijos)):
+    for i in range(1, len(hijos)):
         #si la distancia de el hijo actual es menor a la menor distancia que hemos encontrado, ese hijo sera nuestro nuevo mejor hijo
-        if dist[hijos[i].getId()][padre] < minimo:
+        if dist[hijos[i].getId()][padre] < minimo: 
             minimo = dist[hijos[i].getId()][padre]
             mejor = i
     #ahora tenemos que retornar el nodo con el mejor hijo
@@ -249,7 +249,6 @@ if(len(sys.argv) > 1 and sys.argv[1].isnumeric()):#Revisar un numero de ciudades
     print("Numero de ciudades:", ciudades)
     recorrido, tiempo = buscarRecorrido(ciudades)
     print(recorrido)
-    print("Tiempo total:",tiempo,"[µs]")
 
 else:#Tiempo promedio para varios numeros de ciudades
     ciudadesTiempo = []
